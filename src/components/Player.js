@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FiRepeat } from "react-icons/fi";
 import {
   faPlay,
   faBackward,
@@ -19,6 +20,7 @@ const Player = ({
   setSongs,
 }) => {
   const [shuffle, setShuffle] = useState(false);
+  const [repeat, setRepeat] = useState(false);
   const audioRef = useRef(null);
   const playSongHandler = () => {
     if (isPlaying) {
@@ -67,13 +69,36 @@ const Player = ({
       newIndex = 0;
     }
     if (shuffle) {
-      newIndex = 2;
+      newIndex = Math.floor(Math.random() * songs.length);
+      if (newIndex === currentIndex) {
+        newIndex = newIndex + 1;
+      }
+    } else if (repeat) {
+      newIndex = currentIndex;
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
     }
     setCurrentSong(songs[newIndex]);
   };
   const shuffleHandler = () => {
     setShuffle(!shuffle);
   };
+
+  const repeatHandler = () => {
+    setRepeat(!repeat);
+  };
+
+  useEffect(() => {
+    if (shuffle) {
+      setRepeat(false);
+    }
+  }, [shuffle]);
+
+  useEffect(() => {
+    if (repeat) {
+      setShuffle(false);
+    }
+  }, [repeat]);
   const volumeHandler = (e) => {
     let volume = e.target.value / 100;
     audioRef.current.volume = volume;
@@ -112,12 +137,11 @@ const Player = ({
       </div>
       <div className="play-control">
         <FontAwesomeIcon
-          className="volume"
-          style={{ cursor: "pointer" }}
-          size="1x"
-          icon={faVolumeUp}
+          className="random"
+          style={{ cursor: "pointer", color: `${shuffle ? "green" : "white"}` }}
+          onClick={shuffleHandler}
+          icon={faRandom}
         />
-        <input min={0} max={100} type="range" onClick={volumeHandler} />
         <FontAwesomeIcon
           className="skip-back"
           size="2x"
@@ -139,13 +163,18 @@ const Player = ({
           style={{ cursor: "pointer" }}
           onClick={() => skipTrack(1)}
         />
-        <FontAwesomeIcon
-          className="random"
-          style={{ cursor: "pointer", color: `${shuffle ? "green" : "white"}` }}
-          onClick={shuffleHandler}
-          size="1x"
-          icon={faRandom}
+        <FiRepeat
+          onClick={() => repeatHandler()}
+          style={{ cursor: "pointer", color: `${repeat ? "green" : "white"}` }}
         />
+      </div>
+      <div className="play-control-2">
+        <FontAwesomeIcon
+          className="volume"
+          style={{ cursor: "pointer" }}
+          icon={faVolumeUp}
+        />
+        <input min={0} max={100} type="range" onClick={volumeHandler} />
       </div>
       <audio
         onLoadedData={autoPlayHandler}
