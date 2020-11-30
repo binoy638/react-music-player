@@ -138,7 +138,7 @@ const Player = ({
       <div className="play-control">
         <FontAwesomeIcon
           className="random"
-          style={{ cursor: "pointer", color: `${shuffle ? "green" : "white"}` }}
+          style={{ cursor: "pointer", color: `${shuffle ? "green" : ""}` }}
           onClick={shuffleHandler}
           icon={faRandom}
         />
@@ -165,7 +165,7 @@ const Player = ({
         />
         <FiRepeat
           onClick={() => repeatHandler()}
-          style={{ cursor: "pointer", color: `${repeat ? "green" : "white"}` }}
+          style={{ cursor: "pointer", color: `${repeat ? "green" : ""}` }}
         />
       </div>
       <div className="play-control-2">
