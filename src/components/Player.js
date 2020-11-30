@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
 import { useState } from "react";
-import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
-  faAngleLeft,
-  faAngleRight,
+  faBackward,
+  faForward,
   faPause,
+  faVolumeUp,
+  faRandom,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Player = ({
@@ -17,6 +18,7 @@ const Player = ({
   songs,
   setSongs,
 }) => {
+  const [shuffle, setShuffle] = useState(false);
   const audioRef = useRef(null);
   const playSongHandler = () => {
     if (isPlaying) {
@@ -64,25 +66,18 @@ const Player = ({
     if (newIndex >= songs.length) {
       newIndex = 0;
     }
+    if (shuffle) {
+      newIndex = 2;
+    }
     setCurrentSong(songs[newIndex]);
   };
-
-  useEffect(() => {
-    const newSongs = songs.map((song) => {
-      if (song.id === currentSong.id) {
-        return {
-          ...song,
-          active: true,
-        };
-      } else {
-        return {
-          ...song,
-          active: false,
-        };
-      }
-    });
-    setSongs(newSongs);
-  }, [currentSong]);
+  const shuffleHandler = () => {
+    setShuffle(!shuffle);
+  };
+  const volumeHandler = (e) => {
+    let volume = e.target.value / 100;
+    audioRef.current.volume = volume;
+  };
   const [songInfo, setSongInfo] = useState({
     currentTime: 0,
     duration: 0,
@@ -117,22 +112,39 @@ const Player = ({
       </div>
       <div className="play-control">
         <FontAwesomeIcon
+          className="volume"
+          style={{ cursor: "pointer" }}
+          size="1x"
+          icon={faVolumeUp}
+        />
+        <input min={0} max={100} type="range" onClick={volumeHandler} />
+        <FontAwesomeIcon
           className="skip-back"
           size="2x"
-          icon={faAngleLeft}
+          style={{ cursor: "pointer" }}
+          icon={faBackward}
           onClick={() => skipTrack(-1)}
         />
         <FontAwesomeIcon
           onClick={playSongHandler}
           className="play"
+          style={{ cursor: "pointer" }}
           size="2x"
           icon={isPlaying ? faPause : faPlay}
         />
         <FontAwesomeIcon
           className="skip-forward"
           size="2x"
-          icon={faAngleRight}
+          icon={faForward}
+          style={{ cursor: "pointer" }}
           onClick={() => skipTrack(1)}
+        />
+        <FontAwesomeIcon
+          className="random"
+          style={{ cursor: "pointer", color: `${shuffle ? "green" : "white"}` }}
+          onClick={shuffleHandler}
+          size="1x"
+          icon={faRandom}
         />
       </div>
       <audio
