@@ -15,11 +15,12 @@ import { useState, useEffect } from "react";
 //   }
 // );
 var search = require("youtube-search");
+const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
 var opts = {
   type: "video",
   maxResults: 1,
   videoCategoryId: "10",
-  key: "AIzaSyDOxNOC4DNi8rGajm1GMfHcsOAXVAsH3GM",
+  key: API_KEY,
 };
 function Search({ setvideoId }) {
   const [query, setQuery] = useState("");
