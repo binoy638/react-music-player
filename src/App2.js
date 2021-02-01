@@ -3,7 +3,7 @@
 import Ytsearch from "./components/YT/Search";
 import Player from "./components/YT/Player";
 import { useState } from "react";
-
+import "./styles/app.scss";
 function App2() {
   const [videoId, setvideoId] = useState("T3bxbVGWy5k");
   return (
