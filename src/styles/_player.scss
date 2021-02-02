@@ -80,3 +80,18 @@ input[type="range"]::-moz-range-thumb {
     width: 60%;
   }
 }
+
+.searchsong {
+  display: flex;
+  justify-content: space-around;
+  width: 20%;
+
+  align-items: center;
+  input[type="text"]:focus {
+    outline: none;
+  }
+  input[type="text"] {
+    height: 30px;
+    width: 300px;
+  }
+}
