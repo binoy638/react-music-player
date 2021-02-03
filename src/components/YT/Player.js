@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import YouTube from "react-youtube";
 import {
   faPlay,
@@ -10,6 +10,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 function Player({ videoId, songinfo }) {
+  useEffect(() => {}, []);
+
   const [isPlaying, setisPlaying] = useState(false);
   const [currentTime, setcurrentTime] = useState(0);
 
@@ -26,7 +28,7 @@ function Player({ videoId, songinfo }) {
   let songduration;
   const _onReady = (event) => {
     // access to player in all event handlers via event.target
-    // console.log(event);
+    console.log(event);
     var d = event.target.getDuration() / 60;
     // console.log(d / 60);
     var c = event.target.getCurrentTime();
@@ -47,13 +49,17 @@ function Player({ videoId, songinfo }) {
   const isplayinghandler = () => {
     if (isPlaying) {
       playerRef.current.internalPlayer.pauseVideo();
-      setisPlaying(!isPlaying);
     } else {
       playerRef.current.internalPlayer.playVideo();
-      setisPlaying(!isPlaying);
     }
   };
-
+  const playerStateHandler = (e) => {
+    if (e.data === 0 || e.data === 2) {
+      setisPlaying(false);
+    } else if (e.data === 1 || e.data === 3) {
+      setisPlaying(true);
+    }
+  };
   return (
     <div>
       <div className="song-container">
@@ -68,8 +74,8 @@ function Player({ videoId, songinfo }) {
           videoId={videoId}
           opts={opts}
           onReady={_onReady}
-          // onTimeUpdate={() => console.log("hi")}
-          onStateChange={(e) => console.log(e.data)}
+          onTimeUpdate={() => console.log("hi")}
+          onStateChange={(e) => playerStateHandler(e)}
           // onPlaybackRateChange={(e) => console.log(e.target.value)}
           ref={playerRef}
         />
