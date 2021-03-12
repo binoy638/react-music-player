@@ -14,6 +14,7 @@ function Player({ videoId, songinfo }) {
 
   const [isPlaying, setisPlaying] = useState(false);
   const [currentTime, setcurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const playerRef = useRef(null);
   const opts = {
@@ -27,16 +28,20 @@ function Player({ videoId, songinfo }) {
   };
   let songduration;
   const _onReady = (event) => {
+    // event.target.playVideo();
     // access to player in all event handlers via event.target
     console.log(event);
-    var d = event.target.getDuration() / 60;
+    // var d = event.target.getCurrentTime();
     // console.log(d / 60);
-    var c = event.target.getCurrentTime();
-    // console.log(c);
-    // console.log(event.target);
+    const c = event.target.getDuration();
+    console.log(c);
+    setDuration(c);
 
-    // console.log(playerRef);
-    songduration = d;
+    // console.log(c);
+    // console.log(d);
+
+    console.log(playerRef);
+
     // console.log("songduration");
     // console.log(songduration);
   };
@@ -58,8 +63,22 @@ function Player({ videoId, songinfo }) {
       setisPlaying(false);
     } else if (e.data === 1 || e.data === 3) {
       setisPlaying(true);
+      // setcurrentTime((count) => count + 1);
     }
   };
+
+  const dragHandler = () => {
+    setInterval(() => {
+      setcurrentTime((count) => count + 1);
+    }, 1000);
+  };
+
+  const seekHandler = (e) => {
+    let time = e.target.value;
+    playerRef.current.internalPlayer.seekTo(time);
+    setcurrentTime(time);
+  };
+
   return (
     <div>
       <div className="song-container">
@@ -73,22 +92,28 @@ function Player({ videoId, songinfo }) {
         <YouTube
           videoId={videoId}
           opts={opts}
+          // onPlayerReady={() => {
+          //   console.log("ready");
+          // }}
           onReady={_onReady}
           onTimeUpdate={() => console.log("hi")}
           onStateChange={(e) => playerStateHandler(e)}
+          // onPlay={() => {
+          //   console.log(duration);
+          // }}
           // onPlaybackRateChange={(e) => console.log(e.target.value)}
           ref={playerRef}
         />
       </div>
       <div className="player">
         <div className="play-control">
-          {/* <input
-          min={0}
-          max={songduration || 0}
-          // onChange={dragHandler}
-          value={5}
-          type="range"
-        /> */}
+          <input
+            min={0}
+            max={duration}
+            onChange={seekHandler}
+            value={currentTime}
+            type="range"
+          />
           <FontAwesomeIcon
             className="skip-back"
             size="2x"
